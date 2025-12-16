@@ -20,6 +20,7 @@ export interface SiteConfig {
   structure: string[];
   palette: string; // ID of palette
   fontPair: string; // ID of font pair
+  customFont?: string; // Name of the Google Font
   description?: string; // AI Generated
   content?: Record<string, string>; // Key-value store for editable content
 }

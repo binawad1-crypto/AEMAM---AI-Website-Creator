@@ -1,3 +1,4 @@
+
 import { Language } from './types';
 
 export const TRANSLATIONS = {
@@ -136,8 +137,21 @@ export const TRANSLATIONS = {
     editorAnalytics: 'Analytics',
     editorSettings: 'Settings',
     editorPublish: 'Publish',
+    editorLibrary: 'Library',
     saved: 'Saved',
     editSection: 'Edit Section',
+
+    // Library
+    libPhotos: 'Stock Photos',
+    libIcons: 'Icons',
+    libAI: 'AI Studio',
+    libSearch: 'Search assets...',
+    libGenerate: 'Generate Image',
+    libPromptPlaceholder: 'Describe the image (e.g., Luxury gold office)...',
+    libApplyTo: 'Apply to:',
+    libSectionHero: 'Hero Image',
+    libSectionAbout: 'About Image',
+    libSectionFeature: 'Feature Icon',
 
     // Footer
     footerQuickLinks: 'Quick Links',
@@ -145,6 +159,19 @@ export const TRANSLATIONS = {
     footerFollowUs: 'Follow Us',
     footerPrivacy: 'Privacy Policy',
     footerTerms: 'Terms of Service',
+
+    // Publishing Flow
+    pubModalTitle: 'Ready to Launch?',
+    pubModalSubtitle: 'Configure your SEO settings before going live.',
+    pubSeoTitle: 'SEO Title',
+    pubSeoDesc: 'Meta Description',
+    pubSlug: 'Site URL',
+    pubLaunch: 'Launch Website',
+    pubLaunching: 'Launching...',
+    pubSuccessTitle: 'Congratulations!',
+    pubSuccessDesc: 'Your website is now live and ready to be seen by the world.',
+    pubVisitLink: 'Visit Live Site',
+    pubBackToEditor: 'Back to Editor',
   },
   ar: {
     next: 'التالي',
@@ -281,8 +308,21 @@ export const TRANSLATIONS = {
     editorAnalytics: 'التحليلات',
     editorSettings: 'الإعدادات',
     editorPublish: 'نشر',
+    editorLibrary: 'المكتبة',
     saved: 'تم الحفظ',
     editSection: 'تعديل القسم',
+
+    // Library
+    libPhotos: 'صور جاهزة',
+    libIcons: 'رموز وأيقونات',
+    libAI: 'ستوديو الذكاء الاصطناعي',
+    libSearch: 'ابحث في الأصول...',
+    libGenerate: 'توليد الصورة',
+    libPromptPlaceholder: 'وصف الصورة (مثال: مكتب ذهبي فاخر)...',
+    libApplyTo: 'تطبيق على:',
+    libSectionHero: 'الواجهة الرئيسية',
+    libSectionAbout: 'صورة من نحن',
+    libSectionFeature: 'رمز الميزة',
 
     // Footer
     footerQuickLinks: 'روابط سريعة',
@@ -290,5 +330,18 @@ export const TRANSLATIONS = {
     footerFollowUs: 'تابعنا على',
     footerPrivacy: 'سياسة الخصوصية',
     footerTerms: 'الشروط والأحكام',
+
+    // Publishing Flow
+    pubModalTitle: 'جاهز للإطلاق؟',
+    pubModalSubtitle: 'قم بضبط إعدادات SEO قبل النشر للعالم.',
+    pubSeoTitle: 'عنوان الصفحة (SEO Title)',
+    pubSeoDesc: 'وصف الصفحة (Meta Description)',
+    pubSlug: 'رابط الموقع',
+    pubLaunch: 'إطلاق الموقع',
+    pubLaunching: 'جاري النشر...',
+    pubSuccessTitle: 'ألف مبروك!',
+    pubSuccessDesc: 'موقعك أصبح متاحاً الآن للعالم ويمكن زيارته.',
+    pubVisitLink: 'زيارة الموقع الحي',
+    pubBackToEditor: 'العودة للمحرر',
   }
 };
