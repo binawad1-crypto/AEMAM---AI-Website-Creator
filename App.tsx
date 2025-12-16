@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { 
   ArrowRight, ArrowLeft, Search, Check, Moon, Sun, Globe, 
   LayoutTemplate, Type, Palette as PaletteIcon, Monitor, Menu, X, Sparkles, Loader2,
-  Zap, ShoppingBag, BarChart, Code2, Globe2, ShieldCheck, PlayCircle
+  Zap, ShoppingBag, BarChart, Code2, Globe2, ShieldCheck, PlayCircle, Star, MousePointer2
 } from 'lucide-react';
 import { 
   WizardStep, Language, Theme, SiteConfig, 
@@ -28,7 +28,8 @@ const LOGOS = [
   "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png",
   "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/2560px-IBM_logo.svg.png",
   "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_logo.png/1200px-Tesla_logo.png"
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_logo.png/1200px-Tesla_logo.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/2560px-Meta_Platforms_Inc._logo.svg.png"
 ];
 
 const App: React.FC = () => {
@@ -37,6 +38,7 @@ const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('ar');
   const [theme, setTheme] = useState<Theme>('light');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   
   // Data State
   const [config, setConfig] = useState<SiteConfig>({
@@ -75,6 +77,13 @@ const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Scroll effect for header
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Topic Prediction Effect
   useEffect(() => {
@@ -153,9 +162,15 @@ const App: React.FC = () => {
 
   // --- RENDERERS ---
 
-  // 1. Landing Page Header (Complex Menu)
+  // 1. Landing Page Header (Sticky & Glass)
   const renderLandingHeader = () => (
-    <header className="fixed top-0 left-0 right-0 h-20 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-lg z-50 flex items-center justify-between px-6 md:px-12 transition-colors border-b border-gray-100 dark:border-neutral-800">
+    <header 
+      className={`fixed top-0 left-0 right-0 h-20 z-50 flex items-center justify-between px-6 md:px-12 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-100 dark:border-neutral-800' 
+          : 'bg-transparent border-transparent'
+      }`}
+    >
        <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-black dark:bg-white rounded-full flex items-center justify-center text-white dark:text-black shadow-lg">
             <Sparkles className="w-5 h-5" />
@@ -245,86 +260,173 @@ const App: React.FC = () => {
     </header>
   );
 
-  // Simplified Navigation for Split Screen
+  // Responsive Navigation for Wizard
   const renderNavigation = () => {
-    if (step === WizardStep.LANDING || step === WizardStep.DASHBOARD) return null;
-    return null; // We will integrate navigation into the sidebar directly for the split screen view
+    // Hide navigation for Landing, Dashboard, and Split Screen steps (which handle their own nav)
+    if (step === WizardStep.LANDING || step === WizardStep.DASHBOARD || step >= WizardStep.NAME) return null;
+
+    return (
+     <div className="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-neutral-900 border-t border-gray-100 dark:border-neutral-800 flex items-center justify-between z-40 animate-slide-up">
+        <button 
+           onClick={handleBack} 
+           className="px-6 py-3 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors flex items-center gap-2"
+        >
+           {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
+           {t.back}
+        </button>
+
+        <button 
+          onClick={handleNext} 
+          disabled={step === WizardStep.TOPIC && !config.topic}
+          className="bg-neutral-900 dark:bg-white text-white dark:text-black px-8 py-3 rounded-md text-sm font-bold tracking-wide flex items-center gap-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+        >
+          {isLoadingAI ? t.loading : t.next}
+          {!isLoadingAI && (isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />)}
+        </button>
+     </div>
+    );
   };
 
-  // STEP 0: LANDING PAGE
+  // STEP 0: LANDING PAGE (PROFESSIONAL ANIMATED HERO)
   const renderLandingPage = () => (
-    <div className="min-h-screen pt-20 flex flex-col relative overflow-x-hidden selection:bg-purple-200 selection:text-black">
-      {/* Background Gradients */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-50 -z-10 translate-x-1/3 -translate-y-1/3"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-50 dark:bg-purple-900/10 rounded-full blur-3xl opacity-50 -z-10 -translate-x-1/3 translate-y-1/3"></div>
+    <div className="min-h-screen bg-white dark:bg-black overflow-x-hidden selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+      
+      {/* 1. PROFESSIONAL HERO SECTION */}
+      <section className="relative min-h-[110vh] flex items-center justify-center pt-20 overflow-hidden bg-white dark:bg-neutral-950">
+         
+         {/* Animated Aurora Background */}
+         <div className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 overflow-hidden">
+            <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] bg-blue-400 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-aurora filter"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] bg-purple-400 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-aurora" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute top-[40%] left-[30%] w-[50vw] h-[50vw] bg-pink-300 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-aurora" style={{ animationDelay: '4s' }}></div>
+         </div>
 
-      {/* HERO SECTION */}
-      <section className="flex flex-col lg:flex-row max-w-7xl mx-auto w-full px-6 py-12 lg:py-24 items-center gap-12 lg:gap-24 min-h-[90vh]">
-         {/* Text Content */}
-         <div className="flex-1 space-y-8 animate-fade-in text-center lg:text-left rtl:lg:text-right z-10">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-medium leading-[1.1] tracking-tight">
-               {t.landingTitle}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-500 dark:text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0">
-               {t.landingSubtitle}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-               <button 
-                  onClick={() => setStep(WizardStep.TOPIC)}
-                  className="px-10 py-5 bg-black dark:bg-white text-white dark:text-black rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-xl flex items-center justify-center gap-2 group"
-               >
-                  {t.landingCTA}
-                  {isRTL ? <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-               </button>
-               <button className="px-10 py-5 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 text-black dark:text-white rounded-full font-bold text-lg hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors flex items-center gap-2">
-                 <PlayCircle className="w-5 h-5" />
-                 {t.previewButton}
-               </button>
+         {/* Grid Pattern Overlay */}
+         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 dark:brightness-50 pointer-events-none"></div>
+         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+
+         <div className="relative z-10 max-w-[1400px] w-full mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            
+            {/* Text Content */}
+            <div className="space-y-8 lg:space-y-12 text-center lg:text-left rtl:lg:text-right pt-10">
+               
+               {/* Badge */}
+               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 backdrop-blur-md animate-fade-in mx-auto lg:mx-0">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+                  <span className="text-xs font-bold tracking-wide uppercase">{t.landingTemplatesTitle.split(' ')[0]} AI 2.0</span>
+               </div>
+
+               {/* Headline */}
+               <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[1.05]">
+                  <span className="block animate-slide-up" style={{ animationDelay: '0.1s' }}>{lang === 'en' ? 'Craft.' : 'اصنع'}</span>
+                  <span className="block animate-slide-up bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400" style={{ animationDelay: '0.2s' }}>
+                    {lang === 'en' ? 'Publish.' : 'انشر'}
+                  </span>
+                  <span className="block animate-slide-up" style={{ animationDelay: '0.3s' }}>{lang === 'en' ? 'Grow.' : 'توسع'}</span>
+               </h1>
+
+               {/* Subtitle */}
+               <p className="text-xl md:text-2xl text-gray-500 dark:text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+                  {t.landingSubtitle}
+               </p>
+
+               {/* Buttons */}
+               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.5s' }}>
+                  <button 
+                      onClick={() => setStep(WizardStep.TOPIC)}
+                      className="px-10 py-5 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-3 group relative overflow-hidden"
+                   >
+                      <span className="relative z-10">{t.landingCTA}</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-black dark:from-gray-200 dark:to-white opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      {isRTL ? <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform relative z-10" /> : <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />}
+                   </button>
+                   
+                   <button className="px-10 py-5 bg-white/50 dark:bg-black/50 backdrop-blur-md border border-gray-200 dark:border-white/10 text-black dark:text-white rounded-2xl font-bold text-lg hover:bg-white dark:hover:bg-neutral-900 transition-all flex items-center gap-3 group">
+                     <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <PlayCircle className="w-4 h-4" />
+                     </div>
+                     {t.previewButton}
+                   </button>
+               </div>
+            </div>
+
+            {/* Visual Content (Floating UI) */}
+            <div className="relative animate-fade-in w-full h-[500px] lg:h-[700px] hidden md:block perspective-1000" style={{ animationDelay: '0.3s' }}>
+               
+               {/* Main Browser Window */}
+               <div className="absolute inset-0 top-10 left-10 lg:left-0 bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-neutral-800 overflow-hidden animate-float z-10 transform rotate-y-12 rotate-x-6 hover:rotate-0 transition-transform duration-700 ease-out">
+                  {/* Header */}
+                  <div className="h-10 bg-gray-50 dark:bg-neutral-950 border-b border-gray-100 dark:border-neutral-800 flex items-center px-4 gap-2">
+                     <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                     <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                     <div className="ml-4 h-5 w-2/3 bg-gray-100 dark:bg-neutral-800 rounded-md"></div>
+                  </div>
+                  {/* Body Image */}
+                  <div className="w-full h-full relative">
+                     <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover opacity-90" alt="Dashboard" />
+                     
+                     {/* Floating Card 1 */}
+                     <div className="absolute top-12 -right-12 bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-xl border border-gray-100 dark:border-neutral-700 w-48 animate-float-delayed">
+                        <div className="flex items-center gap-3 mb-3">
+                           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600"><BarChart className="w-4 h-4" /></div>
+                           <div>
+                              <div className="text-xs text-gray-400 font-bold uppercase">Revenue</div>
+                              <div className="font-bold text-lg">$12,450</div>
+                           </div>
+                        </div>
+                        <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                           <div className="h-full w-[70%] bg-green-500 rounded-full"></div>
+                        </div>
+                     </div>
+
+                     {/* Floating Card 2 */}
+                     <div className="absolute bottom-12 -left-6 bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-xl border border-gray-100 dark:border-neutral-700 w-56 animate-float" style={{ animationDelay: '1s' }}>
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 rounded-full overflow-hidden">
+                              <img src="https://i.pravatar.cc/100?img=5" alt="User" />
+                           </div>
+                           <div>
+                              <div className="text-sm font-bold">Sarah J.</div>
+                              <div className="text-xs text-gray-400">Just purchased "Pro Plan"</div>
+                           </div>
+                        </div>
+                     </div>
+
+                     {/* Cursor */}
+                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                        <div className="relative">
+                          <MousePointer2 className="w-8 h-8 text-black dark:text-white fill-black dark:fill-white stroke-white dark:stroke-black stroke-2 drop-shadow-lg animate-pulse-slow" />
+                          <div className="absolute top-full left-full bg-black dark:bg-white text-white dark:text-black text-xs font-bold px-2 py-1 rounded ml-1 mt-1 whitespace-nowrap">
+                             Zemam Editor
+                          </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               
+               {/* Decorative Blobs Behind */}
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
             </div>
          </div>
-
-         {/* Hero Visual */}
-         <div className="flex-1 w-full max-w-xl lg:max-w-none relative animate-slide-up" style={{ animationDelay: '0.2s' }}>
-             {/* Abstract UI composition */}
-             <div className="relative aspect-square md:aspect-[4/3] rounded-2xl bg-white dark:bg-neutral-900 shadow-2xl border border-gray-200 dark:border-neutral-800 overflow-hidden p-4 group perspective-1000">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-                <div className="w-full h-full bg-gray-50 dark:bg-neutral-950 rounded-lg overflow-hidden relative transform group-hover:rotate-1 transition-transform duration-700 ease-out">
-                   {/* Fake header */}
-                   <div className="h-12 border-b border-gray-200 dark:border-neutral-800 flex items-center px-4 gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                   </div>
-                   {/* Fake Content */}
-                   <div className="p-8 space-y-6 opacity-80 group-hover:scale-[1.02] transition-transform duration-700">
-                      <div className="h-8 w-2/3 bg-gray-200 dark:bg-neutral-800 rounded mb-4 animate-pulse"></div>
-                      <div className="h-4 w-full bg-gray-200 dark:bg-neutral-800 rounded"></div>
-                      <div className="h-4 w-5/6 bg-gray-200 dark:bg-neutral-800 rounded"></div>
-                      <div className="grid grid-cols-2 gap-4 pt-8">
-                         <div className="aspect-video bg-blue-100 dark:bg-blue-900/20 rounded"></div>
-                         <div className="aspect-video bg-purple-100 dark:bg-purple-900/20 rounded"></div>
-                      </div>
-                   </div>
-                </div>
-                
-                {/* Floating Badge */}
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-black dark:bg-white rounded-full flex items-center justify-center text-white dark:text-black font-bold text-xs rotate-12 shadow-xl z-10 border-4 border-white dark:border-neutral-900">
-                   AI POWERED
-                </div>
+         
+         {/* Infinite Marquee at Bottom of Hero */}
+         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-white dark:to-neutral-950 flex items-end pb-6 overflow-hidden">
+             <div className="w-full flex items-center relative">
+                 <div className="flex animate-marquee whitespace-nowrap gap-12 lg:gap-24 opacity-40 hover:opacity-100 transition-opacity items-center px-6">
+                    {/* Double the logos for seamless loop */}
+                    {[...LOGOS, ...LOGOS, ...LOGOS].map((logo, i) => (
+                      <img key={i} src={logo} className="h-6 lg:h-8 w-auto object-contain mix-blend-multiply dark:mix-blend-screen grayscale hover:grayscale-0 transition-all" alt="logo" />
+                    ))}
+                 </div>
+                 {/* Fade edges */}
+                 <div className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-white dark:from-neutral-950 to-transparent z-10"></div>
+                 <div className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-white dark:from-neutral-950 to-transparent z-10"></div>
              </div>
          </div>
-      </section>
-
-      {/* TRUSTED BY */}
-      <section className="py-12 border-y border-gray-100 dark:border-neutral-800 bg-gray-50/50 dark:bg-neutral-900/30">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-           <p className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-8">{t.trustedBy}</p>
-           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale transition-all duration-500 hover:grayscale-0 hover:opacity-100">
-              {LOGOS.map((logo, i) => (
-                <img key={i} src={logo} className="h-6 md:h-8 object-contain mix-blend-multiply dark:mix-blend-screen" alt="Partner Logo" />
-              ))}
-           </div>
-        </div>
       </section>
 
       {/* HOW IT WORKS */}
