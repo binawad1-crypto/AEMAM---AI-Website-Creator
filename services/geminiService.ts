@@ -97,26 +97,32 @@ export const generateTailoredContent = async (topic: string, name: string, lang:
 
   try {
     const prompt = lang === 'en' 
-      ? `You are an award-winning Art Director and Copywriter. Create a complete website concept for "${topic}" named "${name}".
+      ? `You are a world-class Web Designer & Art Director. 
+         Your goal is to design a BREATHTAKING, unique landing page concept for a "${topic}" business named "${name}".
          
          TASKS:
-         1. **Analyze Vibe:** Determine if this business needs a 'luxury' (high-end, serif), 'saas' (tech, gradients), 'bold' (creative, big text), or 'minimal' (clean, photography) look.
-         2. **Write Content:** Create catchy headlines (Hero) and professional descriptions.
-         3. **Art Direction:** 
-            - 'layout_style': Choose one of ['luxury', 'saas', 'bold', 'minimal'].
-            - 'image_style_keyword': A phrase describing the visual aesthetic (e.g., "Dark moody lighting with gold accents").
-            - 'hero_image_prompt': A descriptive prompt for a high-quality hero image.
-         
+         1. **Visual Strategy:** Analyze the topic. 
+            - If it's high-end (jewelry, law, real estate, consulting), use 'luxury'.
+            - If it's tech/startup/app, use 'saas'.
+            - If it's creative/fashion/art/gym, use 'bold'.
+            - If it's lifestyle/blog/minimalist/writing, use 'minimal'.
+         2. **Hero Section (The Masterpiece):** Write a headline that is short, punchy, and emotionally resonant. Not generic.
+         3. **Imagery:** Describe the hero image in 'hero_image_prompt' with cinematic lighting, specific composition, and high resolution keywords (e.g., "8k, cinematic lighting, photorealistic, depth of field, elegant").
+         4. **Content:** Populate all fields with professional, persuasive copy.
+
          Return JSON.`
-      : `أنت مخرج فني وكاتب إبداعي حائز على جوائز. قم بإنشاء مفهوم موقع ويب متكامل لـ "${topic}" باسم "${name}".
+      : `أنت مصمم ويب ومخرج فني عالمي.
+         هدفك هو تصميم مفهوم صفحة هبوط مذهلة وفريدة من نوعها لنشاط "${topic}" باسم "${name}".
 
          المهام:
-         1. **تحليل النمط (Vibe):** حدد ما إذا كان هذا النشاط يحتاج إلى نمط 'luxury' (فخم، راقي)، 'saas' (تقني، شركات ناشئة)، 'bold' (إبداعي، جريء)، أو 'minimal' (بسيط، يركز على الصور).
-         2. **كتابة المحتوى:** اكتب عناوين جذابة (للواجهة) وأوصاف احترافية باللغة العربية.
-         3. **الإخراج الفني:**
-            - 'layout_style': اختر واحداً من ['luxury', 'saas', 'bold', 'minimal'].
-            - 'image_style_keyword': (بالانجليزية) عبارة تصف الطابع البصري.
-            - 'hero_image_prompt': (بالانجليزية) وصف دقيق لصورة الواجهة.
+         1. **استراتيجية بصرية:** حلل النشاط.
+            - إذا كان راقياً (مجوهرات، قانون، عقارات)، استخدم 'luxury'.
+            - إذا كان تقنياً/شركة ناشئة، استخدم 'saas'.
+            - إذا كان إبداعياً/أزياء/فن، استخدم 'bold'.
+            - إذا كان أسلوب حياة/تدوين/بسيط، استخدم 'minimal'.
+         2. **قسم الواجهة (التحفة الفنية):** اكتب عنواناً قصيراً، قوياً، ومؤثراً عاطفياً. تجنب العبارات العامة.
+         3. **الصور:** صف صورة الواجهة في 'hero_image_prompt' (باللغة الإنجليزية) بإضاءة سينمائية وتكوين دقيق (مثال: "8k, cinematic lighting, photorealistic").
+         4. **المحتوى:** املأ جميع الحقول بنصوص احترافية ومقنعة.
 
          أرجع النتيجة بصيغة JSON.`;
 

@@ -41,12 +41,12 @@ const ImageEditableWrapper = ({ children, editable, context, onEdit }: { childre
    if (!editable || !onEdit) return <>{children}</>;
    
    return (
-     <div className="relative group w-full h-full cursor-pointer overflow-hidden" onClick={(e) => { e.stopPropagation(); onEdit(context); }}>
+     <div className="relative group w-full h-full cursor-pointer overflow-hidden isolate" onClick={(e) => { e.stopPropagation(); onEdit(context); }}>
         {children}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
-           <div className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform">
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center z-10">
+           <div className="bg-white/90 backdrop-blur-md text-black px-5 py-2.5 rounded-full font-bold text-xs flex items-center gap-2 shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:scale-105">
               <ImageIcon className="w-4 h-4" />
-              <span>Change Image</span>
+              <span>Edit Image</span>
            </div>
         </div>
      </div>
@@ -144,11 +144,14 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ config, lang, editab
         prompt = config.content['_hero_image_prompt'];
     }
     const encoded = encodeURIComponent(prompt);
-    return `https://image.pollinations.ai/prompt/${encoded}?width=800&height=600&nologo=true&seed=${config.name.length + context.length}`;
+    // Increase resolution for hero images specifically
+    const width = context === 'hero' ? 1600 : 800;
+    const height = context === 'hero' ? 1200 : 600;
+    
+    return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&nologo=true&seed=${config.name.length + context.length}`;
   }
 
   const getInputsForSection = () => {
-    // ... (Same inputs as before, abbreviated for brevity)
      switch(activeSection) {
       case 'header': return [{ key: 'nav_title', label: 'Site Title', value: getContent('nav_title', config.name) }];
       case 'hero': return [
@@ -156,7 +159,52 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ config, lang, editab
         { key: 'hero_subtitle', label: 'Subheadline', value: getContent('hero_subtitle', 'Subtitle'), type: 'textarea' as const },
         { key: 'hero_cta', label: 'Button Text', value: getContent('hero_cta', 'Action') }
       ];
-      // ... Add other cases similarly (About, Features, etc.) ...
+      case 'features': return [
+        { key: 'features_title', label: 'Section Title', value: getContent('features_title', lang === 'en' ? 'Core Features' : 'أهم المميزات') },
+        { key: 'feature_1_title', label: 'Feature 1', value: getContent('feature_1_title', lang === 'en' ? 'Fast Performance' : 'أداء سريع') },
+        { key: 'feature_2_title', label: 'Feature 2', value: getContent('feature_2_title', lang === 'en' ? 'Secure' : 'آمن تماماً') },
+        { key: 'feature_3_title', label: 'Feature 3', value: getContent('feature_3_title', lang === 'en' ? 'Support' : 'دعم فني') },
+      ];
+      case 'about': return [
+        { key: 'about_title', label: 'Title', value: getContent('about_title', lang === 'en' ? 'About Us' : 'من نحن') },
+        { key: 'about_desc', label: 'Description', value: getContent('about_desc', lang === 'en' ? 'We are a dedicated team committed to delivering excellence.' : 'نحن فريق متفاني ملتزم بتقديم التميز.'), type: 'textarea' as const }
+      ];
+      case 'services': return [
+        { key: 'services_title', label: 'Section Title', value: getContent('services_title', lang === 'en' ? 'Our Expertise' : 'خبراتنا') },
+        { key: 'service_1_title', label: 'Service 1 Title', value: getContent('service_1_title', lang === 'en' ? 'Service 1' : 'خدمة 1') },
+        { key: 'service_1_desc', label: 'Service 1 Desc', value: getContent('service_1_desc', lang === 'en' ? 'Lorem ipsum dolor sit amet.' : 'لوريم إيبسوم دولار سيت أميت.'), type: 'textarea' as const },
+      ];
+      case 'testimonials': return [
+        { key: 'testimonials_title', label: 'Title', value: getContent('testimonials_title', lang === 'en' ? 'Testimonials' : 'آراء العملاء') },
+        { key: 'testimonial_1_text', label: 'Review 1', value: getContent('testimonial_1_text', lang === 'en' ? 'Amazing service! Highly recommended.' : 'خدمة مذهلة! أنصح بها بشدة.'), type: 'textarea' as const },
+      ];
+      case 'team': return [
+        { key: 'team_title', label: 'Title', value: getContent('team_title', lang === 'en' ? 'Our Team' : 'فريق العمل') },
+      ];
+      case 'pricing': return [
+        { key: 'pricing_title', label: 'Title', value: getContent('pricing_title', lang === 'en' ? 'Pricing Plans' : 'باقات الأسعار') },
+        { key: 'price_1', label: 'Basic Price', value: getContent('price_1', '$29') },
+      ];
+      case 'faq': return [
+        { key: 'faq_title', label: 'Title', value: getContent('faq_title', lang === 'en' ? 'FAQ' : 'الأسئلة الشائعة') },
+      ];
+      case 'blog': return [
+        { key: 'blog_title', label: 'Title', value: getContent('blog_title', lang === 'en' ? 'Latest News' : 'آخر الأخبار') },
+      ];
+      case 'newsletter': return [
+         { key: 'newsletter_title', label: 'Title', value: getContent('newsletter_title', lang === 'en' ? 'Subscribe' : 'اشترك معنا') },
+      ];
+      case 'contact': return [
+        { key: 'contact_title', label: 'Title', value: getContent('contact_title', lang === 'en' ? 'Let\'s Work Together' : 'دعنا نعمل معاً') },
+        { key: 'contact_btn', label: 'Button Text', value: getContent('contact_btn', lang === 'en' ? 'Submit' : 'إرسال') }
+      ];
+      case 'footer': return [
+        { key: 'footer_desc', label: 'Company Description', value: getContent('footer_desc', lang === 'en' ? 'Building the future of digital experiences.' : 'نبني مستقبل التجارب الرقمية.'), type: 'textarea' as const },
+        { key: 'footer_text', label: 'Copyright Text', value: getContent('footer_text', `© 2024 ${config.name || 'Zemam'}. ${lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}`) },
+        { key: 'social_twitter', label: 'Twitter URL', value: getContent('social_twitter', '#') },
+        { key: 'social_instagram', label: 'Instagram URL', value: getContent('social_instagram', '#') },
+        { key: 'social_linkedin', label: 'LinkedIn URL', value: getContent('social_linkedin', '#') },
+      ];
       default: return [];
     }
   }
@@ -179,8 +227,8 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ config, lang, editab
           <ImageEditableWrapper editable={editable} context="hero" onEdit={onEditImage}>
              <img src={getImage('hero')} className="w-full h-full object-cover opacity-100 transition-transform duration-[20s] hover:scale-110" alt="Hero" />
           </ImageEditableWrapper>
-          <div className="absolute inset-0 bg-black/40"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30"></div>
+          <div className="absolute inset-0 bg-black/40 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
        </div>
        <div className="relative z-10 text-center max-w-4xl mx-auto space-y-8 text-white">
           <div className="inline-block border-t border-b border-white/30 py-2 px-8 mb-4">
@@ -300,7 +348,7 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ config, lang, editab
              <ImageEditableWrapper editable={editable} context="hero" onEdit={onEditImage}>
                 <img src={getImage('hero')} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="Bold Hero" />
              </ImageEditableWrapper>
-             <div className="absolute top-4 left-4 bg-black text-white px-4 py-1 font-mono text-sm uppercase font-bold">
+             <div className="absolute top-4 left-4 bg-black text-white px-4 py-1 font-mono text-sm uppercase font-bold pointer-events-none">
                Figure 01.
              </div>
           </div>
