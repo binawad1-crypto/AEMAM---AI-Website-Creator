@@ -31,7 +31,7 @@ export const EditorDashboard: React.FC<EditorDashboardProps> = ({ config, lang, 
   return (
     <div className="flex h-screen bg-white dark:bg-neutral-900 overflow-hidden font-sans text-neutral-900 dark:text-white transition-colors">
        {/* Sidebar */}
-       <aside className="w-20 lg:w-64 border-r border-gray-200 dark:border-neutral-800 flex flex-col bg-gray-50 dark:bg-neutral-950 flex-shrink-0 z-20 transition-all duration-300">
+       <aside className="w-20 lg:w-64 ltr:border-r rtl:border-l border-gray-200 dark:border-neutral-800 flex flex-col bg-gray-50 dark:bg-neutral-950 flex-shrink-0 z-20 transition-all duration-300">
           <div className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-gray-200 dark:border-neutral-800">
              <div className="w-8 h-8 bg-black dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center font-bold">
                A

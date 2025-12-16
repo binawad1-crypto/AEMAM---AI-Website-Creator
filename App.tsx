@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { 
   ArrowRight, ArrowLeft, Search, Check, Moon, Sun, Globe, 
   LayoutTemplate, Type, Palette as PaletteIcon, Monitor, Menu, X, Sparkles, Loader2,
-  Zap, ShoppingBag, BarChart, Code2, Globe2, ShieldCheck, PlayCircle, Star, MousePointer2
+  Zap, ShoppingBag, BarChart, Code2, Globe2, ShieldCheck, PlayCircle, Star, MousePointer2,
+  PenTool, Image as ImageIcon, Layers, Cpu, Smartphone
 } from 'lucide-react';
 import { 
   WizardStep, Language, Theme, SiteConfig, 
@@ -23,13 +24,14 @@ const TEMPLATE_PREVIEWS = [
   { id: 'event', image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=800&auto=format&fit=crop' },
 ];
 
+// Fake Arabic Logos generated as SVGs
 const LOGOS = [
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/2560px-IBM_logo.svg.png",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tesla_logo.png/1200px-Tesla_logo.png",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/2560px-Meta_Platforms_Inc._logo.svg.png"
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40' fill='none'%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Cairo' font-weight='800' font-size='24' fill='%23525252'%3Eمدار%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40' fill='none'%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Cairo' font-weight='800' font-size='24' fill='%23525252'%3Eنماء%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40' fill='none'%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Cairo' font-weight='800' font-size='24' fill='%23525252'%3Eرؤية%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40' fill='none'%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Cairo' font-weight='800' font-size='24' fill='%23525252'%3Eسحاب%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40' fill='none'%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Cairo' font-weight='800' font-size='24' fill='%23525252'%3Eطويق%3C/text%3E%3C/svg%3E",
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40' fill='none'%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Cairo' font-weight='800' font-size='24' fill='%23525252'%3Eبنيان%3C/text%3E%3C/svg%3E"
 ];
 
 const App: React.FC = () => {
@@ -263,6 +265,7 @@ const App: React.FC = () => {
   // Responsive Navigation for Wizard
   const renderNavigation = () => {
     // Hide navigation for Landing, Dashboard, and Split Screen steps (which handle their own nav)
+    // NOTE: We now allow NAME step to use custom internal navigation, so we hide global nav for it too.
     if (step === WizardStep.LANDING || step === WizardStep.DASHBOARD || step >= WizardStep.NAME) return null;
 
     return (
@@ -719,10 +722,11 @@ const App: React.FC = () => {
      subtitle: string, 
      controlPanel: React.ReactNode
   ) => (
+    // We let the layout flow naturally with RTL (Sidebar on Left, Preview on Right) by NOT reversing it.
     <div className="flex h-screen pt-16 overflow-hidden bg-gray-50 dark:bg-neutral-900">
        {/* Left: Preview (Canvas) - 75% Width */}
        <div className="hidden lg:flex flex-col w-[75%] h-full bg-[#e4e4e4] dark:bg-[#1a1a1a] p-8 overflow-hidden items-center justify-center relative shadow-inner">
-          <div className="absolute top-6 left-6 text-sm font-bold text-gray-500 uppercase tracking-widest opacity-50">
+          <div className={`absolute top-6 text-sm font-bold text-gray-500 uppercase tracking-widest opacity-50 ${isRTL ? 'right-6' : 'left-6'}`}>
              {config.name || (lang === 'en' ? 'Untitled Site' : 'موقع جديد')}
           </div>
           
@@ -736,7 +740,7 @@ const App: React.FC = () => {
        </div>
 
        {/* Right: Controls (Sidebar) - 25% Width */}
-       <div className="w-full lg:w-[25%] h-full flex flex-col bg-white dark:bg-neutral-900 border-l border-gray-200 dark:border-neutral-800 shadow-xl z-20">
+       <div className={`w-full lg:w-[25%] h-full flex flex-col bg-white dark:bg-neutral-900 shadow-xl z-20 ${isRTL ? 'border-r' : 'border-l'} border-gray-200 dark:border-neutral-800`}>
           <div className="flex-1 overflow-y-auto p-8">
              <div className="animate-fade-in space-y-6">
                 <div>
@@ -772,31 +776,74 @@ const App: React.FC = () => {
     </div>
   );
 
-  // Individual Step Renderers for Split Screen
-  
-  const renderNameStep = () => renderSplitScreen(
-     t.nameTitle, 
-     t.nameSubtitle,
-     <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-bold mb-2 uppercase tracking-wide opacity-70">Title</label>
-          <input 
-            type="text" 
-            value={config.name}
-            onChange={(e) => setConfig({ ...config, name: e.target.value })}
-            placeholder={t.namePlaceholder}
-            className="w-full p-4 text-xl border-b-2 border-gray-200 dark:border-neutral-700 focus:border-black dark:focus:border-white outline-none bg-transparent transition-colors"
-          />
-        </div>
-        <button 
-          onClick={generateName}
-          disabled={isLoadingAI}
-          className="text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 hover:underline disabled:opacity-50"
-        >
-          {isLoadingAI ? <div className="animate-spin w-4 h-4 border-2 border-current rounded-full border-t-transparent"></div> : <span className="text-lg">✨</span>}
-          {t.generateAI}
-        </button>
-     </div>
+  // New Centered Name Step Layout (No Split Screen)
+  const renderNameStep = () => (
+    <div className="min-h-screen pt-20 flex flex-col items-center justify-center relative overflow-hidden bg-white dark:bg-black p-6">
+       {/* Decorative Background Icons (Floating) */}
+       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10 dark:opacity-20">
+          <Code2 className="absolute top-[20%] left-[10%] w-16 h-16 animate-float" />
+          <LayoutTemplate className="absolute top-[15%] right-[15%] w-24 h-24 rotate-12 animate-float-delayed" />
+          <PaletteIcon className="absolute bottom-[20%] left-[20%] w-12 h-12 -rotate-6 animate-float" />
+          <Monitor className="absolute bottom-[25%] right-[10%] w-20 h-20 rotate-6 animate-float-delayed" />
+          <Smartphone className="absolute top-[50%] left-[5%] w-8 h-8 -rotate-12" />
+          <Globe className="absolute top-[40%] right-[5%] w-10 h-10 rotate-12" />
+          <PenTool className="absolute bottom-[10%] right-[30%] w-14 h-14 rotate-45 opacity-50" />
+          <Layers className="absolute top-[10%] left-[40%] w-12 h-12 -rotate-12 opacity-50" />
+          <Cpu className="absolute bottom-[10%] left-[40%] w-10 h-10 rotate-12 opacity-50" />
+          <ImageIcon className="absolute top-[60%] right-[25%] w-8 h-8 -rotate-6 opacity-50" />
+       </div>
+
+       {/* Main Central Content */}
+       <div className="z-10 w-full max-w-3xl flex flex-col items-center animate-fade-in">
+           <div className="text-sm uppercase tracking-widest text-gray-500 mb-4 font-bold">{t.step} 3 {t.of} 3</div>
+           <h1 className="text-5xl md:text-7xl font-bold mb-8 text-center tracking-tight leading-tight">{t.nameTitle}</h1>
+           <p className="text-xl md:text-2xl text-gray-500 mb-16 text-center max-w-lg mx-auto leading-relaxed">{t.nameSubtitle}</p>
+
+           <div className="relative w-full max-w-xl group">
+              <input 
+                type="text" 
+                value={config.name}
+                onChange={(e) => setConfig({ ...config, name: e.target.value })}
+                placeholder={t.namePlaceholder}
+                className="w-full text-center text-4xl md:text-6xl font-bold bg-transparent border-b-2 border-gray-200 dark:border-neutral-800 py-6 focus:border-black dark:focus:border-white outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-neutral-700"
+                autoFocus
+              />
+              <div className="absolute top-1/2 -translate-y-1/2 right-4 md:right-0 transform translate-x-full pl-4 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">
+                 <div className="text-xs font-bold text-gray-400 rotate-90 whitespace-nowrap tracking-widest">TYPE NAME</div>
+              </div>
+           </div>
+
+           {/* AI Generate Button */}
+           <button 
+             onClick={generateName}
+             disabled={isLoadingAI}
+             className="mt-8 flex items-center gap-3 px-6 py-3 rounded-full bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-700 transition-all text-sm font-bold text-gray-600 dark:text-gray-300 disabled:opacity-50"
+           >
+             {isLoadingAI ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-yellow-500" />}
+             {t.generateAI}
+           </button>
+
+           {/* Custom Navigation for this Step */}
+           <div className="flex items-center gap-6 mt-16 w-full max-w-sm justify-between">
+              <button 
+                 onClick={handleBack}
+                 className="px-6 py-3 rounded-lg text-gray-500 hover:text-black dark:hover:text-white font-medium transition-colors flex items-center gap-2"
+              >
+                 {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
+                 {t.back}
+              </button>
+
+              <button 
+                 onClick={handleNext} 
+                 disabled={isLoadingAI || !config.name}
+                 className="px-10 py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-bold text-lg hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                 {t.next}
+                 {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+              </button>
+           </div>
+       </div>
+    </div>
   );
 
   // Updated Structure Step to match the list style checkbox design
